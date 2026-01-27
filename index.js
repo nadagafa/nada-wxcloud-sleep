@@ -22,6 +22,18 @@ app.get("/", async (req, res) => {
   });
 });
 
+// 获取计数
+app.post("/sleep", async (req, res) => {
+
+  console.log('req.headers', req.headers);
+
+  console.log('req.body', req.body);
+  
+  res.send({
+    code: 0,
+    data: 'ok'  });
+});
+
 // 更新计数
 app.post("/api/count", async (req, res) => {
   const { action } = req.body;
