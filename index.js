@@ -42,11 +42,52 @@ const builder = new xml2js.Builder({
 // 首页
 app.get("/", async (req, res) => {
   // res.sendFile(path.join(__dirname, "index.html"));
+
+ 
+
   console.log('333');
   res.send({
     code: 0,
     data: '111',
   });
+});
+
+app.get("/test", async (req, res) => {
+  // res.sendFile(path.join(__dirname, "index.html"));
+
+  const test = {
+
+  signature: 'dc4462939328d9010c4f0024502ac2307bab08a9',
+
+  timestamp: '1769499406',
+
+  nonce: '1241093229',
+
+  openid: 'ot-N32xw4DO4KI2koxhBN4QE-rWk',
+
+  encrypt_type: 'aes',
+
+  msg_signature: 'b0cdf60364df23188c58b898f4fecef84a1c266d'
+
+};
+
+const Encrypt = 'G9TJrUC8GFR2g4jXzpGAu24HRrYHZMiGDmu/GqzxggENL1J/yYH74qgP5lEGWOuDWfDlrK+OpLKSjRBCA5/r69irm5sVJ2UMbCZRstKAJDOnkxQKL7bz9jRadBrXXlES/8SWO974I8xmnQe9Z497I6iqBBVk1cGVk5tmpMBAHjzpw7AgvTJCUAIXuii9wiQuZOoEp6iTv23gBltU8Gn5E3gVlTYBZigubSJdUF/mBnQeHdyBMP1fRQJsY6fISaztMIy/ZGj2ukDC7zrpfhRxqCV6RnvCM/O+C58Tr31tSAqk2Rkt26caITe3B6GqpnbkwRHIyjJrJVtNv21OZiV+z0IPNGE6mEDJIu1T4T6xpyfJRBr2QHeB1qim3V263A1cIfu9ar5So+eP18XW+WvBzBjgxKEbjbbpiSl8Bm6Sv2Y=';
+
+  cryptor.verifySignature(test.signature, test.timestamp, test.nonce);
+
+  const decryptedMsg = cryptor.decrypt(Encrypt);
+        console.log('解密后的消息:', decryptedMsg);
+
+        // 解析解密后的XML
+        const decryptedResult = await parseXML(decryptedMsg);
+        const message = decryptedResult.xml;
+
+        res.send({
+    code: 0,
+    data: message,
+  });
+
+  
 });
 
 // 获取计数
@@ -105,7 +146,7 @@ app.post('/sleep', async (req, res) => {
       console.log('检测到加密消息');
       
       // 验证消息签名
-      if (!cryptor.verifySignature(signature, timestamp, nonce, result.xml.Encrypt)) {
+      if (!cryptor.verifySignature(signature, timestamp, nonce)) {
         console.log('消息签名验证失败');
         return res.status(403).send('签名验证失败');
       }
@@ -307,6 +348,8 @@ class WXBizMsgCrypt {
     const sha1 = crypto.createHash('sha1');
     sha1.update(str);
     const result = sha1.digest('hex');
+
+    console.log('result', result, signature);
     
     return result === signature;
   }
