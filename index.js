@@ -15,7 +15,7 @@ app.use(logger);
 // 首页
 app.get("/", async (req, res) => {
   // res.sendFile(path.join(__dirname, "index.html"));
-  console.log('222');
+  console.log('333');
   res.send({
     code: 0,
     data: '111',
