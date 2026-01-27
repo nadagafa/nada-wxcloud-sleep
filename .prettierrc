@@ -1,0 +1,7 @@
+{
+  "semi": true,           // 语句末尾打印分号
+  "singleQuote": true,    // 使用单引号代替双引号
+  "tabWidth": 2,          // 缩进空格数
+  "trailingComma": "es5", // 在ES5允许的地方（对象、数组等）添加尾随逗号
+  "printWidth": 80        // 每行代码最大长度，超过会自动换行
+}
