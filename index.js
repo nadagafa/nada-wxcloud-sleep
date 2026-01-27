@@ -14,7 +14,12 @@ app.use(logger);
 
 // 首页
 app.get("/", async (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  // res.sendFile(path.join(__dirname, "index.html"));
+  console.log('111');
+  res.send({
+    code: 0,
+    data: '111',
+  });
 });
 
 // 更新计数
