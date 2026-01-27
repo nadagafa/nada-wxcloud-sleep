@@ -87,6 +87,9 @@ app.get("/sleep", async (req, res) => {
 // 接收微信客服消息
 app.post('/sleep', async (req, res) => {
   try {
+
+    console.log('req.query:', req.query);
+
     // 1. 验证签名
     const { signature, timestamp, nonce, msg_signature } = req.query;
     if (!verifySignature(signature, timestamp, nonce)) {
@@ -96,7 +99,7 @@ app.post('/sleep', async (req, res) => {
     // 2. 解析XML消息
     const xml = req.body;
 
-    console.log('xml:', JSON.stringify(xml));
+    console.log('xml:', xml, JSON.stringify(xml));
 
     const result = await parseXML(xml);
     
