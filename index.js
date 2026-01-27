@@ -22,21 +22,40 @@ app.use(express.json());
 app.use(cors());
 app.use(logger);
 
-// 中间件
-app.use(bodyParser.text({ type: 'text/xml' }));
-app.use(express.json());
+app.use(bodyParser.raw({ type: 'application/xml' }));
 
-// XML解析器
-const parser = new xml2js.Parser({
-  explicitArray: false,
-  ignoreAttrs: true,
-  trim: true
-});
+app.post('/sleep', (req, res) => {
+    const xml = req.body.toString();
+    console.log('xml', xml);
+    xml2js.parseString(xml, { trim: true }, (err, result) => {
+        if (err) {
+            console.error('Error parsing XML', err);
+            res.status(500).send('Error parsing XML');
+            return;
+        }
 
-const builder = new xml2js.Builder({
-  cdata: true,
-  headless: true,
-  rootName: 'xml'
+        const msg = result.xml;
+        console.log('msg', msg);
+        const fromUser = msg.FromUserName[0];  // 发送者
+        const toUser = msg.ToUserName[0];      // 接收者
+        const msgType = msg.MsgType[0];        // 消息类型
+
+        if (msgType === 'text') {
+            // 回复文本消息
+            const content = msg.Content[0];   // 用户发送的内容
+            const replyMsg = `<xml>
+                <ToUserName><![CDATA[${fromUser}]]></ToUserName>
+                <FromUserName><![CDATA[${toUser}]]></FromUserName>
+                <CreateTime>${Math.floor(Date.now() / 1000)}</CreateTime>
+                <MsgType><![CDATA[text]]></MsgType>
+                <Content><![CDATA[You said: ${content}]]></Content>
+            </xml>`;
+
+            res.send(replyMsg);
+        } else {
+            res.send('');
+        }
+    });
 });
 
 // 首页
@@ -84,6 +103,7 @@ app.get("/sleep", async (req, res) => {
     */
 });
 
+/*
 // 接收微信客服消息
 app.post('/sleep', async (req, res) => {
   try {
@@ -232,6 +252,7 @@ function verifySignature(signature, timestamp, nonce) {
   
   return result === signature;
 }
+  */
 
 const port = process.env.PORT || 80;
 
