@@ -7,6 +7,12 @@ const { init: initDB, Counter } = require("./db");
 const logger = morgan("tiny");
 
 const app = express();
+
+const crypto = require('crypto');
+
+// 你的微信Token（在微信后台配置的）
+const WECHAT_TOKEN = '6tdf';
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
@@ -25,17 +31,36 @@ app.get("/", async (req, res) => {
 // 获取计数
 app.get("/sleep", async (req, res) => {
 
-  console.log('req.headers', req.headers);
-
-  console.log('req.body', req.body);
-
-  console.log('req.query', req.query);
-
-
+  const { signature, timestamp, nonce, echostr } = req.query;
   
+  // 1. 将token、timestamp、nonce三个参数进行字典序排序
+  const arr = [WECHAT_TOKEN, timestamp, nonce].sort();
+  
+  // 2. 将三个参数字符串拼接成一个字符串
+  const str = arr.join('');
+  
+  // 3. 进行sha1加密
+  const sha1 = crypto.createHash('sha1');
+  sha1.update(str);
+  const result = sha1.digest('hex');
+  
+  // 4. 将加密后的字符串与signature对比
+  if (result === signature) {
+    // 验证成功，返回echostr
+    console.log('微信验证成功');
+    res.send(echostr);
+  } else {
+    // 验证失败
+    console.log('微信验证失败');
+    res.status(403).send('验证失败');
+  }
+
+
+  /*
   res.send({
     code: 200,
     data: 'ok'  });
+    */
 });
 
 // 更新计数
