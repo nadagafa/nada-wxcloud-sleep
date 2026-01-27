@@ -23,14 +23,18 @@ app.get("/", async (req, res) => {
 });
 
 // 获取计数
-app.post("/sleep", async (req, res) => {
+app.get("/sleep", async (req, res) => {
 
   console.log('req.headers', req.headers);
 
   console.log('req.body', req.body);
+
+  console.log('req.query', req.query);
+
+
   
   res.send({
-    code: 0,
+    code: 200,
     data: 'ok'  });
 });
 
