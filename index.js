@@ -333,6 +333,21 @@ app.post("/sleep", async (req, res) => {
     // 2️⃣ 后台异步处理
     setImmediate(async () => {
       console.log("setImmediate");
+
+      const data = JSON.stringify({
+        touser: message.FromUserName,
+        msgtype: "text",
+        text: { content: "hello" },
+      });
+      const test = axios.post(
+        `https://api.weixin.qq.com/cgi-bin/message/custom/send`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+      console.log("test", test);
+
       const voiceUrl =
         "https://py-1300629285.cos.ap-guangzhou.myqcloud.com/audio/20260127/audio_20260127_170523_00a8b165.mp3";
       const result = await processVoiceUrl(voiceUrl, message.FromUserName);
