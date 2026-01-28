@@ -244,13 +244,16 @@ app.post("/sleep", async (req, res) => {
     MsgType: "text",
     Content: "1111",
   };
-  console.log("replyMessage", replyMessage);
-  const replyXml = builder.buildObject(replyMessage);
-  console.log("回复明文XML:", replyXml);
+  //res.set("Content-Type", "text/json");
+  res.send(replyMessage);
+
+  //console.log("replyMessage", replyMessage);
+  //const replyXml = builder.buildObject(replyMessage);
+  //console.log("回复明文XML:", replyXml);
   console.log("7777777777777777");
 
-  res.set("Content-Type", "text/xml");
-  res.send(replyXml);
+  //res.set("Content-Type", "text/xml");
+  //res.send(replyXml);
   /*
     const { signature, timestamp, nonce, encrypt_type, msg_signature } =
       req.query;
