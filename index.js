@@ -247,10 +247,23 @@ app.post("/sleep", async (req, res) => {
   //res.set("Content-Type", "text/json");
   res.send(replyMessage);
 
+  const data = JSON.stringify({
+    touser: message.FromUserName,
+    msgtype: "text",
+    text: { content: "hello" },
+  });
+  const test = await axios.post(
+    `https://api.weixin.qq.com/cgi-bin/message/custom/send`,
+    data,
+    {
+      headers: { "Content-Type": "application/json" },
+    },
+  );
+  console.log("test", test.data);
+
   //console.log("replyMessage", replyMessage);
   //const replyXml = builder.buildObject(replyMessage);
   //console.log("回复明文XML:", replyXml);
-  console.log("7777777777777777");
 
   //res.set("Content-Type", "text/xml");
   //res.send(replyXml);
