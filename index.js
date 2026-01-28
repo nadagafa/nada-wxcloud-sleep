@@ -339,7 +339,7 @@ app.post("/sleep", async (req, res) => {
         msgtype: "text",
         text: { content: "hello" },
       });
-      const test = axios.post(
+      const test = await axios.post(
         `https://api.weixin.qq.com/cgi-bin/message/custom/send`,
         data,
         {
