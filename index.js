@@ -530,7 +530,6 @@ async function uploadVoiceToWechat(filePath) {
     const response = await axios.post(url, form, {
       headers: {
         ...form.getHeaders(),
-        "Content-Length": form.getLengthSync(),
       },
       timeout: 60000, // 60秒超时
     });
