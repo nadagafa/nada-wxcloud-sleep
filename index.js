@@ -253,21 +253,26 @@ app.post("/sleep", async (req, res) => {
     text: { content: "hello" },
   });
 
-  try {
-    const test = await axios.post(
-      `http://api.weixin.qq.com/cgi-bin/message/custom/send`,
-      data,
-      {
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-    console.log("test", test.data);
-    // 处理响应
-  } catch (error) {
-    // 必须添加
-    console.error("请求失败:", error.message);
-    // 根据业务逻辑进行降级处理
-  }
+  // 2️⃣ 后台异步处理
+  setImmediate(async () => {
+    console.log("setImmediate");
+
+    try {
+      const test = await axios.post(
+        `http://api.weixin.qq.com/cgi-bin/message/custom/send`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+      console.log("test", test.data);
+      // 处理响应
+    } catch (error) {
+      // 必须添加
+      console.error("请求失败:", error.message);
+      // 根据业务逻辑进行降级处理
+    }
+  });
 
   //console.log("replyMessage", replyMessage);
   //const replyXml = builder.buildObject(replyMessage);
