@@ -231,26 +231,25 @@ app.get("/sleep", async (req, res) => {
 
 // 接收微信客服消息
 app.post("/sleep", async (req, res) => {
-  try {
-    console.log("POST 消息请求参数:", req.query);
-    console.log("POST 消息体:", req.body);
+  console.log("POST 消息请求参数:", req.query);
+  console.log("POST 消息体:", req.body);
 
-    const message = req.body;
-    // 构建回复消息
-    const timestampStr = Math.floor(Date.now() / 1000).toString();
-    const replyMessage = {
-      ToUserName: message.FromUserName,
-      FromUserName: message.ToUserName,
-      CreateTime: timestampStr,
-      MsgType: "text",
-      Content: "1111",
-    };
-    const replyXml = builder.buildObject(replyMessage);
-    console.log("回复明文XML:", replyXml);
+  const message = req.body;
+  // 构建回复消息
+  const timestampStr = Math.floor(Date.now() / 1000).toString();
+  const replyMessage = {
+    ToUserName: message.FromUserName,
+    FromUserName: message.ToUserName,
+    CreateTime: timestampStr,
+    MsgType: "text",
+    Content: "1111",
+  };
+  const replyXml = builder.buildObject(replyMessage);
+  console.log("回复明文XML:", replyXml);
 
-    res.set("Content-Type", "text/xml");
-    res.send(replyXml);
-    /*
+  res.set("Content-Type", "text/xml");
+  res.send(replyXml);
+  /*
     const { signature, timestamp, nonce, encrypt_type, msg_signature } =
       req.query;
     const xmlBody = req.body;
@@ -363,7 +362,7 @@ app.post("/sleep", async (req, res) => {
     res.set("Content-Type", "text/xml");
     res.send(responseXml);
     */
-    /*
+  /*
     // 2️⃣ 后台异步处理
     setImmediate(async () => {
       console.log("setImmediate");
@@ -371,10 +370,6 @@ app.post("/sleep", async (req, res) => {
       
     });
     */
-  } catch (error) {
-    console.error("处理消息出错:", error);
-    res.status(500).send("服务器错误");
-  }
 
   /*
       const voiceUrl =
