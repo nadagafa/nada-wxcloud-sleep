@@ -255,12 +255,8 @@ app.post("/sleep", async (req, res) => {
 
   try {
     const test = await axios.post(
-      `http://api.weixin.qq.com/cgi-bin/message/custom/send`,
-      {
-        touser: message.FromUserName,
-        msgtype: "text",
-        text: { content: "hello" },
-      },
+      `https://api.weixin.qq.com/cgi-bin/message/custom/send`,
+      data,
       {
         headers: { "Content-Type": "application/json" },
       },
