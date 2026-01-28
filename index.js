@@ -330,32 +330,41 @@ app.post("/sleep", async (req, res) => {
     res.set("Content-Type", "text/xml");
     res.send(responseXml);
 
+    const data = JSON.stringify({
+      touser: message.FromUserName,
+      msgtype: "text",
+      text: { content: "hello" },
+    });
+    const test = await axios.post(
+      `https://api.weixin.qq.com/cgi-bin/message/custom/send`,
+      data,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+    console.log("test", test);
+
+    /*
     // 2️⃣ 后台异步处理
     setImmediate(async () => {
       console.log("setImmediate");
 
-      const data = JSON.stringify({
-        touser: message.FromUserName,
-        msgtype: "text",
-        text: { content: "hello" },
-      });
-      const test = await axios.post(
-        `https://api.weixin.qq.com/cgi-bin/message/custom/send`,
-        data,
-        {
-          headers: { "Content-Type": "application/json" },
-        },
-      );
-      console.log("test", test);
+      
+    });
+    */
+  } catch (error) {
+    console.error("处理消息出错:", error);
+    res.status(500).send("服务器错误");
+  }
 
-      /*
+  /*
       const voiceUrl =
         "https://py-1300629285.cos.ap-guangzhou.myqcloud.com/audio/20260127/audio_20260127_170523_00a8b165.mp3";
       const result = await processVoiceUrl(voiceUrl, message.FromUserName);
       console.log("voice send result", result);
       */
 
-      /*
+  /*
       try {
         if (result.success) {
           res.json({
@@ -379,11 +388,6 @@ app.post("/sleep", async (req, res) => {
         });
       }
       */
-    });
-  } catch (error) {
-    console.error("处理消息出错:", error);
-    res.status(500).send("服务器错误");
-  }
 });
 
 // 处理微信消息
