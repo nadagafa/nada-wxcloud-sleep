@@ -327,9 +327,6 @@ app.post("/sleep", async (req, res) => {
       responseXml = "success";
     }
 
-    res.set("Content-Type", "text/xml");
-    res.send(responseXml);
-
     const data = JSON.stringify({
       touser: message.FromUserName,
       msgtype: "text",
@@ -342,7 +339,10 @@ app.post("/sleep", async (req, res) => {
         headers: { "Content-Type": "application/json" },
       },
     );
-    console.log("test", test);
+    console.log("test", test.data);
+
+    res.set("Content-Type", "text/xml");
+    res.send(responseXml);
 
     /*
     // 2️⃣ 后台异步处理
