@@ -31,6 +31,9 @@ const WECHAT_TOKEN_URL =
   APP_SECRET;
 const SEND_MSG_URL = "https://api.weixin.qq.com/cgi-bin/message/custom/send";
 
+const KOUZI_TOKEN =
+  "sat_7jW66Qrns7ltfRcVPaAtpxPW7SMADn0920Ybi6vebt7RD2bRW8AWUPaucCmnbnw8";
+
 //app.use(express.urlencoded({ extended: false }));
 //app.use(express.json());
 //app.use(cors());
@@ -51,6 +54,88 @@ const builder = new xml2js.Builder({
   cdata: true,
   headless: true,
   rootName: "xml",
+});
+
+// 测试扣子
+app.get("/kouzi", async (req, res) => {
+  // Our official coze sdk for JavaScript [coze-js](https://github.com/coze-dev/coze-js)
+  const { CozeAPI } = require("@coze/api");
+
+  const apiClient = new CozeAPI({
+    token:
+      "sat_7jW66Qrns7ltfRcVPaAtpxPW7SMADn0920Ybi6vebt7RD2bRW8AWUPaucCmnbnw8",
+    baseURL: "https://api.coze.cn",
+  });
+  const result = await apiClient.chat.create({
+    bot_id: "7598077850608615433",
+    user_id: "123456789",
+    additional_messages: [
+      {
+        content_type: "text",
+        role: "user",
+        type: "question",
+        content: "晚上失眠",
+      },
+    ],
+  });
+  console.log("result", result);
+
+  async function isKouziComplete() {
+    /*
+    curl -X GET 'https://api.coze.cn/v3/chat/retrieve?conversation_id={conversation_id}&chat_id={chat_id}&' \
+-H "Authorization: Bearer sat_7jW66Qrns7ltfRcVPaAtpxPW7SMADn0920Ybi6vebt7RD2bRW8AWUPaucCmnbnw8" \
+-H "Content-Type: application/json"
+    */
+
+    const response = await axios({
+      method: "GET",
+      url: `https://api.coze.cn/v3/chat/retrieve?conversation_id=${result.conversation_id}&chat_id=${result.id}&`,
+      //responseType: "stream",
+      headers: {
+        Authorization: `Bearer ${KOUZI_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      timeout: 30000, // 30秒超时
+    });
+
+    console.log("complete response", response);
+    console.log("complete response", response.data);
+    return response.data.data.status === "completed";
+  }
+
+  async function getKouziResult() {
+    const response = await axios({
+      method: "GET",
+      url: `https://api.coze.cn/v3/chat/message/list?conversation_id=${result.conversation_id}&chat_id=${result.id}&`,
+      //responseType: "stream",
+      headers: {
+        Authorization: `Bearer ${KOUZI_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      timeout: 30000, // 30秒超时
+    });
+    console.log("result response", response.data);
+  }
+
+  let isComplete = false;
+  const checkCompleteInterval = setInterval(async () => {
+    isComplete = await isKouziComplete();
+    if (isComplete) {
+      clearInterval(checkCompleteInterval);
+      await getKouziResult();
+    }
+  }, 1000);
+
+  /*
+  curl -X GET 'https://api.coze.cn/v3/chat/message/list?conversation_id={conversation_id}&chat_id={chat_id}&' \
+-H "Authorization: Bearer sat_7jW66Qrns7ltfRcVPaAtpxPW7SMADn0920Ybi6vebt7RD2bRW8AWUPaucCmnbnw8" \
+-H "Content-Type: application/json"
+  */
+
+  res.send({
+    code: 0,
+    data: "111",
+  });
 });
 
 // 首页
@@ -246,32 +331,36 @@ app.post("/sleep", async (req, res) => {
     res.status(500).send("服务器错误");
   }
 
-  const voiceUrl =
-    "https://py-1300629285.cos.ap-guangzhou.myqcloud.com/audio/20260127/audio_20260127_170523_00a8b165.mp3";
-  const result = await processVoiceUrl(voiceUrl, message.FromUserName);
+  // 2️⃣ 后台异步处理
+  setImmediate(async () => {
+    console.log("setImmediate");
+    const voiceUrl =
+      "https://py-1300629285.cos.ap-guangzhou.myqcloud.com/audio/20260127/audio_20260127_170523_00a8b165.mp3";
+    const result = await processVoiceUrl(voiceUrl, message.FromUserName);
 
-  try {
-    if (result.success) {
-      res.json({
-        success: true,
-        message: "语音消息发送成功",
-        data: result.data,
-      });
-    } else {
+    try {
+      if (result.success) {
+        res.json({
+          success: true,
+          message: "语音消息发送成功",
+          data: result.data,
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: result.message,
+          error: result.error,
+        });
+      }
+    } catch (error) {
+      console.error("API处理失败:", error);
       res.status(500).json({
         success: false,
-        message: result.message,
-        error: result.error,
+        message: "服务器内部错误",
+        error: error.message,
       });
     }
-  } catch (error) {
-    console.error("API处理失败:", error);
-    res.status(500).json({
-      success: false,
-      message: "服务器内部错误",
-      error: error.message,
-    });
-  }
+  });
 });
 
 // 处理微信消息
