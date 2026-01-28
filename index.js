@@ -237,6 +237,7 @@ app.post("/sleep", async (req, res) => {
 
     const message = req.body;
     // 构建回复消息
+    const timestampStr = Math.floor(Date.now() / 1000).toString();
     const replyMessage = {
       ToUserName: message.FromUserName,
       FromUserName: message.ToUserName,
