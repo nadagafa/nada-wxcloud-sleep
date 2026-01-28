@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -333,7 +334,9 @@ app.post("/sleep", async (req, res) => {
       const voiceUrl =
         "https://py-1300629285.cos.ap-guangzhou.myqcloud.com/audio/20260127/audio_20260127_170523_00a8b165.mp3";
       const result = await processVoiceUrl(voiceUrl, message.FromUserName);
+      console.log("voice send result", result);
 
+      /*
       try {
         if (result.success) {
           res.json({
@@ -356,6 +359,7 @@ app.post("/sleep", async (req, res) => {
           error: error.message,
         });
       }
+      */
     });
   } catch (error) {
     console.error("处理消息出错:", error);
