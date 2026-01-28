@@ -326,41 +326,41 @@ app.post("/sleep", async (req, res) => {
 
     res.set("Content-Type", "text/xml");
     res.send(responseXml);
+
+    // 2️⃣ 后台异步处理
+    setImmediate(async () => {
+      console.log("setImmediate");
+      const voiceUrl =
+        "https://py-1300629285.cos.ap-guangzhou.myqcloud.com/audio/20260127/audio_20260127_170523_00a8b165.mp3";
+      const result = await processVoiceUrl(voiceUrl, message.FromUserName);
+
+      try {
+        if (result.success) {
+          res.json({
+            success: true,
+            message: "语音消息发送成功",
+            data: result.data,
+          });
+        } else {
+          res.status(500).json({
+            success: false,
+            message: result.message,
+            error: result.error,
+          });
+        }
+      } catch (error) {
+        console.error("API处理失败:", error);
+        res.status(500).json({
+          success: false,
+          message: "服务器内部错误",
+          error: error.message,
+        });
+      }
+    });
   } catch (error) {
     console.error("处理消息出错:", error);
     res.status(500).send("服务器错误");
   }
-
-  // 2️⃣ 后台异步处理
-  setImmediate(async () => {
-    console.log("setImmediate");
-    const voiceUrl =
-      "https://py-1300629285.cos.ap-guangzhou.myqcloud.com/audio/20260127/audio_20260127_170523_00a8b165.mp3";
-    const result = await processVoiceUrl(voiceUrl, message.FromUserName);
-
-    try {
-      if (result.success) {
-        res.json({
-          success: true,
-          message: "语音消息发送成功",
-          data: result.data,
-        });
-      } else {
-        res.status(500).json({
-          success: false,
-          message: result.message,
-          error: result.error,
-        });
-      }
-    } catch (error) {
-      console.error("API处理失败:", error);
-      res.status(500).json({
-        success: false,
-        message: "服务器内部错误",
-        error: error.message,
-      });
-    }
-  });
 });
 
 // 处理微信消息
