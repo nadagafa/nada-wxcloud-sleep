@@ -153,7 +153,7 @@ app.get("/", async (req, res) => {
 app.get("/test", async (req, res) => {
   // res.sendFile(path.join(__dirname, "index.html"));
 
-  const accessToken = await getAccessToken();
+  const token = "11"; //await getAccessToken();
 
   res.send({
     code: 0,
@@ -513,7 +513,7 @@ async function processVoiceUrl(voiceUrl, openid, filename = null) {
 // 上传临时素材到微信
 async function uploadVoiceToWechat(filePath) {
   try {
-    const token = await getAccessToken();
+    const token = "11"; //await getAccessToken();
 
     console.log("开始上传语音到微信...");
     console.log("文件路径:", filePath);
@@ -617,7 +617,7 @@ function cleanupTempFile(filePath) {
 // 发送语音消息给指定用户
 async function sendVoiceMessage(openid, mediaId) {
   try {
-    const token = await getAccessToken();
+    const token = "11"; //await getAccessToken();
 
     const data = {
       touser: openid,
