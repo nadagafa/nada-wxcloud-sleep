@@ -232,6 +232,12 @@ app.get("/sleep", async (req, res) => {
 // 接收微信客服消息
 app.post("/sleep", async (req, res) => {
   try {
+    console.log("POST 消息请求参数:", req.query);
+    console.log("POST 消息体:", req.body);
+
+    res.set("Content-Type", "text/xml");
+    res.send("aaa");
+    /*
     const { signature, timestamp, nonce, encrypt_type, msg_signature } =
       req.query;
     const xmlBody = req.body;
@@ -343,7 +349,7 @@ app.post("/sleep", async (req, res) => {
 
     res.set("Content-Type", "text/xml");
     res.send(responseXml);
-
+    */
     /*
     // 2️⃣ 后台异步处理
     setImmediate(async () => {
