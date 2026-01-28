@@ -525,7 +525,7 @@ async function uploadVoiceToWechat(filePath) {
     const form = new FormData();
     form.append("media", fs.createReadStream(filePath));
 
-    const url = `https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${token}&type=voice`;
+    const url = `https://api.weixin.qq.com/cgi-bin/media/upload?type=voice`;
 
     const response = await axios.post(url, form, {
       headers: {
